@@ -8,23 +8,18 @@ public class GroundTile extends GameObj {
     
     public static String img_file = "Ground.gif";
     public static final int SIZE = 32;
-    public static int INIT_X = 0;
-    public static int INIT_Y;
     public static final int INIT_VEL_X = 0;
     public static final int INIT_VEL_Y = 0;
     
+    // Ground image
     private static BufferedImage img;
     
-    public GroundTile(int courtWidth, int courtHeight, int initX) {
-        super(INIT_VEL_X, INIT_VEL_Y, INIT_X, courtHeight - 32, SIZE, SIZE, courtWidth, courtHeight, 
-                Direction.RIGHT);
-        
-        INIT_X = initX;
+    public GroundTile(int courtWidth, int courtHeight, int initX, int initY) {
+        super(INIT_VEL_X, INIT_VEL_Y, initX, initY, courtWidth - SIZE, courtHeight - SIZE, 
+                SIZE, SIZE, courtWidth, courtHeight, Direction.RIGHT);
         
         try {
-            if (img == null) {
-                img = ImageIO.read(new File(img_file));
-            }
+            if (img == null) img = ImageIO.read(new File(img_file));
         } catch (IOException e) {
             System.out.println("Internal Error:" + e.getMessage());
         }

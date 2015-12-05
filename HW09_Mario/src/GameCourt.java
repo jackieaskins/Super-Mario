@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class GameCourt extends JPanel {
     
     private Mario mario; // the Mario character, keyboard control
-    private GroundTile[] ground = new GroundTile[21];
+    private GroundTile[] ground = new GroundTile[21]; // array of ground tiles
     
     public boolean playing = false; // whether the game is running
     private JLabel status; // Current status text (i.e. Running...)
@@ -17,13 +17,11 @@ public class GameCourt extends JPanel {
     public static final int COURT_WIDTH = 640;
     public static final int COURT_HEIGHT = 400;
     public static final int MARIO_X_VELOCITY = 4;
-    public static final int MARIO_Y_VELOCITY = 10;
+    public static final int MARIO_Y_VELOCITY = 8;
     // Update interval for timer, in milliseconds
     public static final int INTERVAL = 35;
     
     public GameCourt(JLabel status) {
-        // creates border around the court area, JComponent method
-        //setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         // The timer is an object which triggers an action periodically
         // with the given INTERVAL. One registers an ActionListener with
@@ -82,9 +80,10 @@ public class GameCourt extends JPanel {
 
         mario = new Mario(COURT_WIDTH, COURT_HEIGHT);
         for (int i = 0; i < ground.length; i++) {
-            ground[i] = new GroundTile(COURT_WIDTH, COURT_HEIGHT, 32 * i);
+            ground[i] = new GroundTile(COURT_WIDTH, COURT_HEIGHT, GroundTile.SIZE * i, 
+                    COURT_HEIGHT - GroundTile.SIZE);
         }
-
+        
         playing = true;
         status.setText("Running...");
 
@@ -98,8 +97,7 @@ public class GameCourt extends JPanel {
      */
     void tick() {
         if (playing) {
-            // advance the square and snitch in their
-            // current direction.
+            // Advance Mario in his current direction
             mario.move();
 
             // update the display

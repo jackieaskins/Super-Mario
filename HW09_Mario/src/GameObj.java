@@ -27,24 +27,26 @@ public class GameObj {
     public int max_x;
     public int max_y; 
     
+    public int court_width;
+    public int court_height;
+    
     public Direction direction;
     
     /**
      * Constructor
      */
-    public GameObj(int v_x, int v_y, int pos_x, int pos_y, 
+    public GameObj(int v_x, int v_y, int pos_x, int pos_y, int max_x, int max_y, 
         int width, int height, int court_width, int court_height, Direction direction) {
         this.v_x = v_x;
         this.v_y = v_y;
         this.pos_x = pos_x;
         this.pos_y = pos_y;
+        this.max_x = max_x;
+        this.max_y = max_y;
         this.width = width;
         this.height = height;
-        
-        // take the width and height into account when setting the 
-        // bounds for the upper left corner of the object.
-        this.max_x = court_width - width;
-        this.max_y = court_height - height;
+        this.court_width = court_width;
+        this.court_height = court_height;
         
         this.direction = direction;
     }
@@ -78,24 +80,44 @@ public class GameObj {
      * @return whether this object intersects the other object.
      */
     public boolean intersects(GameObj obj) {
-        return intersectsTop(obj) || intersectsBottom(obj) || 
-                intersectsRight(obj) || intersectsLeft(obj);
+        return (intersectsTop(obj) || intersectsBottom(obj) ||
+                intersectsRight(obj) || intersectsLeft(obj));
     }
     
     public boolean intersectsTop(GameObj obj) {
-        return false;
+        return (obj.pos_y + obj.height >= pos_y
+                && obj.pos_y + obj.height <= pos_y + ((double) height / 2)
+                && ((obj.pos_x <= pos_x + width && obj.pos_x >= pos_x) &&
+                        (obj.pos_x + obj.width <= pos_x + width && obj.pos_x + obj.width >= pos_x))
+                );
     }
     
     public boolean intersectsBottom(GameObj obj) {
-        return false;
+        return (obj.pos_y <= pos_y + height
+                && obj.pos_y > pos_y + ((double) height / 2)
+                && ((obj.pos_x <= pos_x + width && obj.pos_x >= pos_x) &&
+                        (obj.pos_x + obj.width <= pos_x + width && obj.pos_x + obj.width >= pos_x))
+                );
     }
     
     public boolean intersectsRight(GameObj obj) {
-        return false;
+        return (!intersectsTop(obj)
+                && !intersectsBottom(obj)
+                && obj.pos_x <= pos_x + width
+                && obj.pos_x >= pos_x + ((double) width / 2)
+                && ((obj.pos_y >= pos_y && obj.pos_y <= pos_y + height) &&
+                        (obj.pos_y + obj.height <= pos_y + height && obj.pos_y + obj.height >= pos_y))
+                );
     }
     
     public boolean intersectsLeft(GameObj obj) {
-        return false;
+        return (!intersectsTop(obj)
+                && !intersectsBottom(obj)
+                && obj.pos_x + obj.width >= pos_x
+                && obj.pos_x + obj.width < pos_x + ((double) height / 2)
+                && ((obj.pos_y >= pos_y && obj.pos_y <= pos_y + height) &&
+                        (obj.pos_y + obj.height <= pos_y + height && obj.pos_y + obj.height >= pos_y))
+                );
     }
     
     public void draw(Graphics g) {
