@@ -21,4 +21,22 @@ public class Enemy extends GameObj {
         super(v_x, v_y, pos_x, pos_y, max_x, max_y, width, height, court_width, court_height, direction);
         // TODO Auto-generated constructor stub
     }
+
+    @Override
+    public void move() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void handleOffScreen() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void draw(Graphics g) {
+        // TODO Auto-generated method stub
+        
+    }
 }

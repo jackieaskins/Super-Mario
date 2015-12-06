@@ -1,6 +1,6 @@
 import java.awt.Graphics;
 
-public class GameObj {
+public abstract class GameObj {
     
     /** Current position of the object (in terms of graphics coordinates)
      *  
@@ -55,19 +55,9 @@ public class GameObj {
      * Moves the object by its velocity.  Ensures that the object does
      * not go outside its bounds by clipping.
      */
-    public void move() {
-        if (v_x < 0) direction = Direction.LEFT;
-        else if (v_x > 0) direction = Direction.RIGHT;
-        
-        pos_x += v_x;
-        pos_y += v_y;
-
-        handleOffScreen();
-    }
+    public abstract void move();
     
-    public void handleOffScreen() {
-        
-    }
+    public abstract void handleOffScreen();
     
     /**
      * Determine whether this game object is currently intersecting
@@ -120,7 +110,5 @@ public class GameObj {
                 );
     }
     
-    public void draw(Graphics g) {
-        
-    }
+    public abstract void draw(Graphics g);
 }

@@ -15,7 +15,6 @@ public class Mario extends GameObj {
     public static String[] walking_lt_img_files = {"Mario_Walk_1L.gif", "Mario_Walk_1L.gif", 
             "Mario_Walk_2L.gif", "Mario_Walk_2L.gif", "Mario_Walk_3L.gif", "Mario_Walk_3L.gif"};
     
-    // 
     public static final int INIT_WIDTH = 26;
     public static final int INIT_HEIGHT = 32;
     public static final int INIT_X = 0;
