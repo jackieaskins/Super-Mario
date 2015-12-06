@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 
 @SuppressWarnings("serial")
@@ -9,6 +10,7 @@ public class GameCourt extends JPanel {
     
     private Mario mario; // the Mario character, keyboard control
     private GroundTile[] ground = new GroundTile[40]; // array of ground tiles
+    private LinkedList<Enemy> enemies;
     
     public boolean playing = false; // whether the game is running
     private JLabel status; // Current status text (i.e. Running...)
@@ -16,16 +18,16 @@ public class GameCourt extends JPanel {
     // Game constants
     public static final int COURT_WIDTH = 640;
     public static final int COURT_HEIGHT = 400;
-    public static final int MARIO_X_VELOCITY = 4;
+    public static final int MARIO_X_VELOCITY = 6;
     public static final int MARIO_Y_VELOCITY = 8;
     public static final int GROUND_X_VELOCITY = 6;
+    public static final int ENEMY_X_VELOCITY = 1;
     public static final int MAX_MARIO_X = 350;
+    public static final int MIN_MARIO_X = 300;
     // Update interval for timer, in milliseconds
     public static final int INTERVAL = 35;
     
-    public static boolean leftKeyHeld;
-    public static boolean rightKeyHeld;
-    public static boolean upKeyHeld;
+    public static int distanceTravelled;
     
     public GameCourt(JLabel status) {
 
@@ -54,26 +56,26 @@ public class GameCourt extends JPanel {
         addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    leftKeyHeld = true;
                     mario.v_x = -MARIO_X_VELOCITY;
                     GroundTile.vel_x = GROUND_X_VELOCITY;
                 } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    rightKeyHeld = true;
                     mario.v_x = MARIO_X_VELOCITY;
                     GroundTile.vel_x = -GROUND_X_VELOCITY;
                 }
                 
                 if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    upKeyHeld = true;
                     if (!mario.gravityOn) mario.v_y = -MARIO_Y_VELOCITY;
                     mario.gravityOn = true;
                 }
             }
 
             public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT) { 
+                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                     mario.v_x = 0;
-                    
+                    GroundTile.vel_x = 0;
+                }
+                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    mario.v_x = 0;
                     GroundTile.vel_x = 0;
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_UP) {
@@ -93,8 +95,10 @@ public class GameCourt extends JPanel {
      * (Re-)set the game to its initial state.
      */
     public void reset() {
-
+        distanceTravelled = 0;
         mario = new Mario(COURT_WIDTH, COURT_HEIGHT);
+        enemies = new LinkedList<Enemy>();
+        enemies.add(new Goomba(COURT_WIDTH, COURT_HEIGHT, 400));
         for (int i = 0; i < ground.length; i++) {
             ground[i] = new GroundTile(COURT_WIDTH, COURT_HEIGHT, GroundTile.SIZE * i, 
                     COURT_HEIGHT - GroundTile.SIZE);
@@ -112,15 +116,40 @@ public class GameCourt extends JPanel {
      * triggers.
      */
     void tick() {
-        if (playing) {
+        if (playing && mario.pos_y <= COURT_HEIGHT) {
             // Advance Mario in his current direction
             mario.move();
-            for (int i = 0; i < ground.length; i++) {
-                ground[i].move();
+            if (mario.pos_x + mario.width >= MAX_MARIO_X && !mario.dead) {
+                for (int i = 0; i < ground.length; i++) {
+                    ground[i].move();
+                }
+            }
+            
+            Enemy[] es = new Enemy[enemies.size()];
+            enemies.toArray(es);
+            for (int i = 0; i < es.length; i++) {
+                if (es[i].startDistance <= distanceTravelled + 50 && !mario.dead) {
+                    es[i].onScreen = true;
+                    es[i].v_x = -ENEMY_X_VELOCITY;
+                }
+                if (es[i].offScreenLeft()) enemies.remove(i);
+                es[i].move();
+                if (es[i].intersectsTop(mario)) {
+                    es[i].dead = true;
+                } else if (es[i].intersectsLeft(mario) || es[i].intersectsRight(mario)) {
+                    mario.dead = true;
+                }
+            }
+            
+            if (mario.dead) {
+                GroundTile.vel_x = 0;
+                for (Enemy enemy : enemies) enemy.v_x = 0;
             }
 
             // update the display
             repaint();
+        } else {
+            playing = false;
         }
     }
     
@@ -132,6 +161,13 @@ public class GameCourt extends JPanel {
                     || (ground[i].pos_x + ground[i].width <= COURT_WIDTH 
                         && ground[i].pos_x + ground[i].width >= 0)) 
                 ground[i].draw(g);
+        }
+        for (int i = 0; i < enemies.size(); i++) {
+            Enemy enemy = enemies.get(i);
+            if (enemy.pos_x <= COURT_WIDTH && enemy.pos_x + enemy.width >=0 && enemy.onScreen) {
+                
+                enemy.draw(g);
+            }
         }
         mario.draw(g);
     }

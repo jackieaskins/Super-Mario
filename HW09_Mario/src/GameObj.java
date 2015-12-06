@@ -1,4 +1,5 @@
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 
 public abstract class GameObj {
     
@@ -31,6 +32,8 @@ public abstract class GameObj {
     public int court_height;
     
     public Direction direction;
+    
+    protected BufferedImage img;
     
     /**
      * Constructor
@@ -110,5 +113,7 @@ public abstract class GameObj {
                 );
     }
     
-    public abstract void draw(Graphics g);
+    public void draw(Graphics g) {
+        g.drawImage(img, pos_x, pos_y, width, height, null);
+    }
 }

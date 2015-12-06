@@ -14,6 +14,7 @@ public class Mario extends GameObj {
             "Mario_Walk_2.gif", "Mario_Walk_2.gif", "Mario_Walk_3.gif", "Mario_Walk_3.gif"};
     public static String[] walking_lt_img_files = {"Mario_Walk_1L.gif", "Mario_Walk_1L.gif", 
             "Mario_Walk_2L.gif", "Mario_Walk_2L.gif", "Mario_Walk_3L.gif", "Mario_Walk_3L.gif"};
+    public static String dead_file = "Mario_Dead.gif";
     
     public static final int INIT_WIDTH = 26;
     public static final int INIT_HEIGHT = 32;
@@ -26,20 +27,22 @@ public class Mario extends GameObj {
     // Boolean values to assist in Mario's jumping
     public boolean reachedMaxHeight = false;
     public boolean gravityOn = false;
+    public boolean dead = false;
     
     // Images used to display different states of Mario's motion
-    private static BufferedImage img; // image currently being used
+    //private static BufferedImage img; // image currently being used
     private static BufferedImage standing_rt_img;
     private static BufferedImage standing_lt_img;
     private static BufferedImage jumping_rt_img;
     private static BufferedImage jumping_lt_img;
     private static BufferedImage[] walking_rt_imgs;
     private static BufferedImage[] walking_lt_imgs;
+    private static BufferedImage dead_img;
     
     // Constructor that takes in the courtWidth & courtHeight
     public Mario(int courtWidth, int courtHeight) {
-        super(INIT_VEL_X, INIT_VEL_Y, INIT_X, courtHeight - INIT_HEIGHT - GROUND_SIZE,
-                courtWidth - INIT_WIDTH, courtHeight - INIT_HEIGHT - GROUND_SIZE, INIT_WIDTH, 
+        super(INIT_VEL_X, INIT_VEL_Y, INIT_X, courtHeight - INIT_HEIGHT - GroundTile.SIZE,
+                courtWidth - INIT_WIDTH, courtHeight - INIT_HEIGHT - GroundTile.SIZE, INIT_WIDTH, 
                 INIT_HEIGHT, courtWidth, courtHeight, Direction.RIGHT);
         
         // Initializes all of the images
@@ -57,6 +60,7 @@ public class Mario extends GameObj {
                 for (int i = 0; i < walking_lt_img_files.length; i++) {
                     walking_lt_imgs[i] = ImageIO.read(new File(walking_lt_img_files[i]));
                 }
+                dead_img = ImageIO.read(new File(dead_file));
                 img = standing_rt_img;
             }            
         } catch (IOException e) {
@@ -66,12 +70,23 @@ public class Mario extends GameObj {
     
     @Override
     public void move() {
+        if (dead) {
+            img = dead_img;
+            v_x = 0;
+            pos_y += 3;
+            return;
+        }
+        
         // Changes the direction based on the direction of the velocity
         if (v_x < 0) direction = Direction.LEFT;
         else if (v_x > 0) direction = Direction.RIGHT;
         
+        GameCourt.distanceTravelled += v_x;
+        
         // Increment Mario's position
-        pos_x += v_x;
+        if (pos_x + width < GameCourt.MAX_MARIO_X && direction == Direction.RIGHT) {
+            pos_x += v_x;
+        }
         
         // If Mario is currently in the air, increase his position by the
         // velocity until he reaches the maximum height, then decrease his
@@ -139,11 +154,6 @@ public class Mario extends GameObj {
         
         if (pos_y < 0) pos_y = 0;
         else if (pos_y > max_y) pos_y = max_y;
-    }
-    
-    @Override
-    public void draw(Graphics g) {
-        g.drawImage(img, pos_x, pos_y, img.getWidth(), img.getHeight(), null);
     }
     
 }

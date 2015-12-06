@@ -4,39 +4,45 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-public class Enemy extends GameObj {
-    public int WIDTH;
-    public int HEIGHT;
-    public int INIT_X = 0;
-    public int INIT_Y;
-    public int INIT_VEL_X = 0;
-    public int INIT_VEL_Y = 0;
-    public int MAX_HEIGHT = 200;
-    public int courtHeight;
+public abstract class Enemy extends GameObj {
+    public int startDistance;
+    public boolean dead = false;
+    public boolean onScreen = false;
+    public static int INIT_VEL_X = 0;
+    public static int INIT_VEL_Y = 0;
     
-    private BufferedImage img;
     
-    public Enemy(int v_x, int v_y, int pos_x, int pos_y, int max_x, int max_y, int width, int height, int court_width,
-            int court_height, Direction direction) {
-        super(v_x, v_y, pos_x, pos_y, max_x, max_y, width, height, court_width, court_height, direction);
-        // TODO Auto-generated constructor stub
+    public Enemy(int courtWidth, int courtHeight, int initWidth, int initHeight, int startDistance) {
+        super(INIT_VEL_X, INIT_VEL_Y, courtWidth, courtHeight - initHeight - GroundTile.SIZE,
+                courtWidth - initWidth, courtHeight - initHeight - GroundTile.SIZE, initWidth,
+                initHeight, courtWidth, courtHeight, Direction.LEFT);
+        
+        this.startDistance = startDistance;
     }
 
     @Override
     public void move() {
-        // TODO Auto-generated method stub
+        if (dead) {
+            v_x = 0;
+            pos_y += 5;
+            return;
+        }
         
+        if (v_x < 0) direction = Direction.LEFT;
+        else if (v_x > 0) direction = Direction.RIGHT;
+        
+        pos_x += v_x;
+        
+        handleOffScreen();        
     }
 
     @Override
     public void handleOffScreen() {
-        // TODO Auto-generated method stub
-        
+        if (pos_y < 0) pos_y = 0;
+        else if (pos_y > max_y) pos_y = max_y;   
     }
-
-    @Override
-    public void draw(Graphics g) {
-        // TODO Auto-generated method stub
-        
+    
+    public boolean offScreenLeft() {
+        return pos_x + width < 0;
     }
 }

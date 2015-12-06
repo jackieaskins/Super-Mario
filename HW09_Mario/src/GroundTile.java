@@ -14,7 +14,7 @@ public class GroundTile extends GameObj {
     public static int vel_x;
     
     // Ground image
-    private static BufferedImage img;
+    //private static BufferedImage img;
     
     public GroundTile(int courtWidth, int courtHeight, int initX, int initY) {
         super(INIT_VEL_X, INIT_VEL_Y, initX, initY, courtWidth - SIZE, courtHeight - SIZE, 
@@ -33,6 +33,8 @@ public class GroundTile extends GameObj {
         if (vel_x > 0) direction = Direction.RIGHT;
         
         pos_x += vel_x;
+        
+        handleOffScreen();
     }
     
     @Override
@@ -40,9 +42,5 @@ public class GroundTile extends GameObj {
         if (pos_y < 0) pos_y = 0;
         else if (pos_y > max_y) pos_y = max_y;
     }
-    
-    @Override
-    public void draw(Graphics g) {
-        g.drawImage(img, pos_x, pos_y, width, height, null);
-    }
+
 }
