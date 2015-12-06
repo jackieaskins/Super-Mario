@@ -80,36 +80,64 @@ public abstract class GameObj {
     public boolean intersectsTop(GameObj obj) {
         return (obj.pos_y + obj.height >= pos_y
                 && obj.pos_y + obj.height <= pos_y + ((double) height / 2)
-                && ((obj.pos_x <= pos_x + width && obj.pos_x >= pos_x) &&
-                        (obj.pos_x + obj.width <= pos_x + width && obj.pos_x + obj.width >= pos_x))
+                && obj.pos_x + obj.width >= pos_x
+                && obj.pos_x <= pos_x + width
                 );
     }
     
     public boolean intersectsBottom(GameObj obj) {
         return (obj.pos_y <= pos_y + height
                 && obj.pos_y > pos_y + ((double) height / 2)
-                && ((obj.pos_x <= pos_x + width && obj.pos_x >= pos_x) &&
-                        (obj.pos_x + obj.width <= pos_x + width && obj.pos_x + obj.width >= pos_x))
+                && obj.pos_x + obj.width >= pos_x
+                && obj.pos_x <= pos_x + width
                 );
     }
     
     public boolean intersectsRight(GameObj obj) {
-        return (!intersectsTop(obj)
-                && !intersectsBottom(obj)
-                && obj.pos_x <= pos_x + width
+        return (obj.pos_x <= pos_x + width
                 && obj.pos_x >= pos_x + ((double) width / 2)
-                && ((obj.pos_y >= pos_y && obj.pos_y <= pos_y + height) &&
-                        (obj.pos_y + obj.height <= pos_y + height && obj.pos_y + obj.height >= pos_y))
+                && obj.pos_y + obj.height >= pos_y
+                && obj.pos_y <= pos_y + height
                 );
     }
     
     public boolean intersectsLeft(GameObj obj) {
-        return (!intersectsTop(obj)
-                && !intersectsBottom(obj)
-                && obj.pos_x + obj.width >= pos_x
+        return (obj.pos_x + obj.width >= pos_x
                 && obj.pos_x + obj.width < pos_x + ((double) height / 2)
-                && ((obj.pos_y >= pos_y && obj.pos_y <= pos_y + height) &&
-                        (obj.pos_y + obj.height <= pos_y + height && obj.pos_y + obj.height >= pos_y))
+                && obj.pos_y + obj.height >= pos_y
+                && obj.pos_y <= pos_y + height
+                );
+    }
+    
+    public boolean collides(GameObj obj) {
+        return (collidesTop(obj) || collidesBottom(obj) || collidesLeft(obj) || collidesRight(obj));
+    }
+    
+    public boolean collidesTop(GameObj obj) {
+        return (obj.pos_y + obj.height == pos_y
+                && obj.pos_x + obj.width >= pos_x
+                && obj.pos_x <= pos_x + width
+                );
+    }
+    
+    public boolean collidesBottom(GameObj obj) {
+        return (obj.pos_y == pos_y + height
+                && obj.pos_x + obj.width >= pos_x
+                && obj.pos_x <= pos_x + width
+                );
+    }
+    
+    public boolean collidesLeft(GameObj obj) {
+        return (obj.pos_x + obj.width == pos_x
+                && obj.pos_y + obj.height >= pos_y
+                && obj.pos_y <= pos_y + height
+                );
+    }
+    
+    public boolean collidesRight(GameObj obj) {
+        return (obj.pos_x == pos_x + width
+                && obj.pos_y + obj.height >= pos_y
+                && obj.pos_y <= pos_y + height
                 );
     }
     

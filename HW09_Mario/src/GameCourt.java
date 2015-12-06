@@ -119,11 +119,12 @@ public class GameCourt extends JPanel {
         if (playing && mario.pos_y <= COURT_HEIGHT) {
             // Advance Mario in his current direction
             mario.move();
-            if (mario.pos_x + mario.width >= MAX_MARIO_X && !mario.dead) {
-                for (int i = 0; i < ground.length; i++) {
-                    ground[i].move();
-                }
-            }
+            
+//            if (mario.pos_x + mario.width >= MAX_MARIO_X && !mario.dead) {
+//                for (int i = 0; i < ground.length; i++) {
+//                    ground[i].move();
+//                }
+//            }
             
             Enemy[] es = new Enemy[enemies.size()];
             enemies.toArray(es);
