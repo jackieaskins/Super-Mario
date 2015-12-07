@@ -84,9 +84,9 @@ public class Mario extends GameObj {
         GameCourt.distanceTravelled += v_x;
         
         // Increment Mario's position
-        //if (pos_x + width < GameCourt.MAX_MARIO_X && direction == Direction.RIGHT) {
+        if (direction == Direction.LEFT 
+                || (direction == Direction.RIGHT && pos_x + width < GameCourt.MAX_MARIO_X)) 
             pos_x += v_x;
-        //}
         
         // If Mario is currently in the air, increase his position by the
         // velocity until he reaches the maximum height, then decrease his

@@ -141,6 +141,22 @@ public abstract class GameObj {
                 );
     }
     
+    public void forceCollisionTop(GameObj obj) {
+        obj.pos_y = pos_y - obj.height;
+    }
+    
+    public void forceCollisionLeft(GameObj obj) {
+        obj.pos_x = pos_x - obj.width;
+    }
+    
+    public void forceCollisionBottom(GameObj obj) {
+        obj.pos_y = pos_y + height;
+    }
+    
+    public void forceCollisionRight(GameObj obj) {
+        obj.pos_x = pos_x + width;
+    }
+    
     public void draw(Graphics g) {
         g.drawImage(img, pos_x, pos_y, width, height, null);
     }

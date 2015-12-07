@@ -1,7 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 
@@ -21,7 +20,7 @@ public class GameCourt extends JPanel {
     public static final int MARIO_X_VELOCITY = 6;
     public static final int MARIO_Y_VELOCITY = 8;
     public static final int GROUND_X_VELOCITY = 6;
-    public static final int ENEMY_X_VELOCITY = 1;
+    public static final int ENEMY_X_VELOCITY = 5;
     public static final int MAX_MARIO_X = 350;
     public static final int MIN_MARIO_X = 300;
     // Update interval for timer, in milliseconds
@@ -120,11 +119,11 @@ public class GameCourt extends JPanel {
             // Advance Mario in his current direction
             mario.move();
             
-//            if (mario.pos_x + mario.width >= MAX_MARIO_X && !mario.dead) {
-//                for (int i = 0; i < ground.length; i++) {
-//                    ground[i].move();
-//                }
-//            }
+            if (mario.pos_x + mario.width >= MAX_MARIO_X && !mario.dead) {
+                for (int i = 0; i < ground.length; i++) {
+                    ground[i].move();
+                }
+            }
             
             Enemy[] es = new Enemy[enemies.size()];
             enemies.toArray(es);
@@ -135,9 +134,9 @@ public class GameCourt extends JPanel {
                 }
                 if (es[i].offScreenLeft()) enemies.remove(i);
                 es[i].move();
-                if (es[i].intersectsTop(mario)) {
+                if (es[i].collidesTop(mario)) {
                     es[i].dead = true;
-                } else if (es[i].intersectsLeft(mario) || es[i].intersectsRight(mario)) {
+                } else if (es[i].collidesLeft(mario) || es[i].collidesRight(mario)) {
                     mario.dead = true;
                 }
             }
