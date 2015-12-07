@@ -8,7 +8,7 @@ import java.util.LinkedList;
 public class GameCourt extends JPanel {
     
     private Mario mario; // the Mario character, keyboard control
-    private GroundTile[] ground = new GroundTile[40]; // array of ground tiles
+    private GroundTile[] ground = new GroundTile[75]; // array of ground tiles
     private LinkedList<Enemy> enemies;
     
     public boolean playing = false; // whether the game is running
@@ -18,7 +18,7 @@ public class GameCourt extends JPanel {
     public static final int COURT_WIDTH = 640;
     public static final int COURT_HEIGHT = 400;
     public static final int MARIO_X_VELOCITY = 6;
-    public static final int MARIO_Y_VELOCITY = 8;
+    public static final int MARIO_Y_VELOCITY = 10;
     public static final int GROUND_X_VELOCITY = 6;
     public static final int ENEMY_X_VELOCITY = 5;
     public static final int MAX_MARIO_X = 350;
@@ -98,6 +98,7 @@ public class GameCourt extends JPanel {
         mario = new Mario(COURT_WIDTH, COURT_HEIGHT);
         enemies = new LinkedList<Enemy>();
         enemies.add(new Goomba(COURT_WIDTH, COURT_HEIGHT, 400));
+        enemies.add(new GreenKoopaTroop(COURT_WIDTH, COURT_HEIGHT, 650));
         for (int i = 0; i < ground.length; i++) {
             ground[i] = new GroundTile(COURT_WIDTH, COURT_HEIGHT, GroundTile.SIZE * i, 
                     COURT_HEIGHT - GroundTile.SIZE);
@@ -134,9 +135,9 @@ public class GameCourt extends JPanel {
                 }
                 if (es[i].offScreenLeft()) enemies.remove(i);
                 es[i].move();
-                if (es[i].collidesTop(mario)) {
+                if (es[i].intersectsTop(mario) && mario.reachedMaxHeight) {
                     es[i].dead = true;
-                } else if (es[i].collidesLeft(mario) || es[i].collidesRight(mario)) {
+                } else if (!es[i].dead && (es[i].intersectsLeft(mario) || es[i].intersectsRight(mario))) {
                     mario.dead = true;
                 }
             }
