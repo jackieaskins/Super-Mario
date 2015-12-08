@@ -4,23 +4,25 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-public abstract class Enemy extends GameObj {
-    public String[] img_files;
+public class Coin extends GameObj {
+    
+    public static String[] img_files = {"Coin.gif", "Coin.gif", "Coin_2.gif", "Coin_2.gif",
+            "Coin_3.gif", "Coin_3.gif", "Coin_4.gif", "Coin_4.gif"};
     
     public int startDistance;
-    public boolean dead = false;
-    public boolean onScreen = false;
     public static int INIT_VEL_X = 0;
     public static int INIT_VEL_Y = 0;
+    public static final int WIDTH = 16;
+    public static final int HEIGHT = 28;
+    public static final int START_HEIGHT = 250;
     
     private BufferedImage[] imgs;
     
+    public static int vel_x;
     
-    public Enemy(int courtWidth, int courtHeight, int initWidth, int initHeight, int startDistance,
-            String[] img_files) {
-        super(INIT_VEL_X, INIT_VEL_Y, courtWidth, courtHeight - initHeight - GroundTile.SIZE,
-                courtWidth - initWidth, courtHeight - initHeight - GroundTile.SIZE, initWidth,
-                initHeight, courtWidth, courtHeight, Direction.LEFT);
+    public Coin(int courtWidth, int courtHeight, int startDistance) {
+        super(INIT_VEL_X, INIT_VEL_Y, courtWidth, START_HEIGHT, courtWidth, courtHeight, WIDTH,
+                HEIGHT, courtWidth, courtHeight, Direction.LEFT);
         
         try {
             imgs = new BufferedImage[img_files.length];
@@ -31,23 +33,19 @@ public abstract class Enemy extends GameObj {
         } catch (IOException e) {
             System.out.println("Internal Error:" + e.getMessage());
         }
-        
-        this.startDistance = startDistance;
     }
 
     @Override
     public void move() {
-        if (dead) {
-            v_x = 0;
-            pos_y += 5;
-            return;
-        }
+        if (vel_x < 0) direction = Direction.LEFT;
+        if (vel_x > 0) direction = Direction.RIGHT;
         
-        if (v_x < 0) direction = Direction.LEFT;
-        else if (v_x > 0) direction = Direction.RIGHT;
+        pos_x += vel_x;
         
-        pos_x += v_x;
-        
+        handleOffScreen();
+    }
+    
+    public void spinCoin() {
         for (int i = 0; i < imgs.length; i++) {
             if (i == imgs.length - 1 && img.equals(imgs[i])) {
                 img = imgs[0];
@@ -57,21 +55,11 @@ public abstract class Enemy extends GameObj {
                 break;
             }
         }
-        
-        handleOffScreen();        
     }
 
     @Override
     public void handleOffScreen() {
         if (pos_y < 0) pos_y = 0;
-        else if (pos_y > max_y) pos_y = max_y;   
-    }
-    
-    public boolean offScreenLeft() {
-        return pos_x + width < 0;
-    }
-    
-    public int incrementScore(int score) {
-        return score += 100;
+        else if (pos_y > max_y) pos_y = max_y; 
     }
 }

@@ -21,8 +21,7 @@ public class Mario extends GameObj {
     public static final int INIT_X = 0;
     public static final int INIT_VEL_X = 0;
     public static final int INIT_VEL_Y = 0;
-    public static final int MAX_HEIGHT = 250;
-    public static final int GROUND_SIZE = 32;
+    public static final int MAX_HEIGHT = 225;
     
     // Boolean values to assist in Mario's jumping
     public boolean reachedMaxHeight = false;
@@ -84,7 +83,7 @@ public class Mario extends GameObj {
         GameCourt.distanceTravelled += v_x;
         
         // Increment Mario's position
-        if (direction == Direction.LEFT 
+        if (direction == Direction.LEFT || GameCourt.endTile
                 || (direction == Direction.RIGHT && pos_x + width < GameCourt.MAX_MARIO_X)) 
             pos_x += v_x;
         

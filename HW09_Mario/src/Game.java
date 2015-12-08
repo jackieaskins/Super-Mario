@@ -12,18 +12,34 @@ public class Game implements Runnable {
         // Top-level frame in which game components live
         // Be sure to change "TOP LEVEL FRAME" to the name of your game
         final JFrame frame = new JFrame("Super Mario");
-        frame.setLocation(300, 300);
+        frame.setLocation(300, 200);
 
         // Status panel
         final JPanel status_panel = new JPanel();
+        status_panel.setLayout(new GridLayout());
         frame.add(status_panel, BorderLayout.NORTH);
-        final JLabel status = new JLabel("Running...");
-        status_panel.add(status);
+        final JLabel score_label = new JLabel("Score: 0", SwingConstants.CENTER);
+        status_panel.add(score_label);
+        final JLabel coins_label = new JLabel("Coins: 0", SwingConstants.CENTER);
+        status_panel.add(coins_label);
+        final JLabel lives_label = new JLabel("Lives: 3", SwingConstants.CENTER);
+        status_panel.add(lives_label);
+        
 
         // Main playing area
-        final GameCourt court = new GameCourt(status);
+        final GameCourt court = new GameCourt(score_label, coins_label, lives_label);
         court.setBackground(new Color(107, 140, 255));
         frame.add(court, BorderLayout.CENTER);
+        
+        // Welcome Screen
+//        final JPanel welcomeScreen = new JPanel();
+//        welcomeScreen.setBackground(new Color(107, 140, 255));
+
+//        CardLayout cl = new CardLayout();
+//        final JPanel contentPanel = new JPanel(cl);
+//        contentPanel.add(welcomeScreen, "Welcome Screen");
+//        contentPanel.add(court, "Game");
+//        frame.add(contentPanel, BorderLayout.CENTER);
 
         // Reset button
         final JPanel control_panel = new JPanel();

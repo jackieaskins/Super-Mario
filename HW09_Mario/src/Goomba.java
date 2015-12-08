@@ -14,4 +14,9 @@ public class Goomba extends Enemy {
     public Goomba(int courtWidth, int courtHeight, int startDistance) {
         super(courtWidth, courtHeight, INIT_WIDTH, INIT_HEIGHT, startDistance, img_files); 
     }
+    
+    @Override
+    public int incrementScore(int score) {
+        return score += 100;
+    }
 }
