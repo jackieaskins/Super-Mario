@@ -13,7 +13,9 @@ public class GameCourt extends JPanel {
     private LinkedList<Enemy> enemies;
     private LinkedList<Coin> coins;
     
-    public boolean playing = false; // whether the game is running
+    public static String username = "";
+    
+    public static boolean playing = false; // whether the game is running
     public boolean gameOver = false;
     public boolean gameWon = false;
     public boolean playAgainSet = false;
@@ -59,7 +61,7 @@ public class GameCourt extends JPanel {
         // Enable keyboard focus on the court area.
         // When this component has the keyboard focus, key
         // events will be handled by its key listener.
-        setFocusable(true);
+        //setFocusable(true);
 
         // This key listener allows the square to move as long
         // as an arrow key is pressed, by changing the square's
