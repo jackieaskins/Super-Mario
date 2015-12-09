@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
 import javax.swing.*;
 
 public class Game implements Runnable {
@@ -24,6 +25,15 @@ public class Game implements Runnable {
         status_panel.add(coins_label);
         final JLabel lives_label = new JLabel("Lives: 3", SwingConstants.CENTER);
         status_panel.add(lives_label);
+
+        // Reset button
+        final JPanel control_panel = new JPanel();
+        frame.add(control_panel, BorderLayout.SOUTH);
+        
+        // Card Layout
+        final CardLayout cl = new CardLayout();
+        final JPanel contentPanel = new JPanel(cl);
+        frame.add(contentPanel, BorderLayout.CENTER);
         
         // Welcome Screen
         final JPanel welcomeScreen = new JPanel();
@@ -33,62 +43,47 @@ public class Game implements Runnable {
         final JLabel title = new JLabel(titleImage);
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         welcomeScreen.add(title);
-        JLabel enterUsername = new JLabel("Please enter a username with no spaces and no more than 5 characters.");
-        welcomeScreen.add(enterUsername);
+        JLabel enterUsername = new JLabel("Please enter a username.");
         enterUsername.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        // Instructions Screen
-        final JPanel instructionsScreen = new JPanel();
-        instructionsScreen.setBackground(Color.BLACK);
-        
-        // Main playing area
-        final GameCourt court = new GameCourt(score_label, coins_label, lives_label);
-        court.setBackground(new Color(107, 140, 255));
-//        frame.add(court, BorderLayout.CENTER);
-        
-        // High Score Screen
-        final JPanel highScoreScreen = new JPanel();
-        highScoreScreen.setBackground(Color.WHITE);
-        
-        // Card Layout
-        final CardLayout cl = new CardLayout();
-        final JPanel contentPanel = new JPanel(cl);
+        welcomeScreen.add(enterUsername);
+        JLabel noSpaces = new JLabel("No spaces and no more than 6 characters.");
+        noSpaces.setAlignmentX(Component.CENTER_ALIGNMENT);
+        welcomeScreen.add(noSpaces);
         contentPanel.add(welcomeScreen, "Welcome Screen");
-        contentPanel.add(instructionsScreen, "Instructions Screen");
-        contentPanel.add(court, "Game");
-        contentPanel.add(highScoreScreen, "High Score Screen");
-        frame.add(contentPanel, BorderLayout.CENTER);
-        
-        // Username text field
         final JTextField usernameBox = new JTextField(10);
         usernameBox.setAlignmentX(Component.CENTER_ALIGNMENT);
         usernameBox.setMaximumSize(usernameBox.getPreferredSize());
         ActionListener submitUsername = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (usernameBox.getText().length() == 0) {
-                    GameCourt.username = "silly";
-                } else {
-                    if (usernameBox.getText().length() >= 5) {
-                        GameCourt.username = usernameBox.getText().substring(0, 4);
-                    } else {
-                        GameCourt.username = usernameBox.getText();
-                    }
-                }
+                String userText = usernameBox.getText();
+                userText.replaceAll("\\s", "");
+                if (userText.length() == 0) GameCourt.username = "silly";
+                else if (userText.length() > 6) GameCourt.username = userText.substring(0, 6);
+                else GameCourt.username = userText;
+                
+            
                 cl.show(contentPanel, "Instructions Screen");
             }
         };
         usernameBox.addActionListener(submitUsername);
         welcomeScreen.add(usernameBox);
         
-        // Let's Play button
-        final JButton letsPlay = new JButton("Let's Play!");
-        letsPlay.setAlignmentX(Component.CENTER_ALIGNMENT);
-        letsPlay.addActionListener(submitUsername);
-        welcomeScreen.add(letsPlay);
-
-        // Reset button
-        final JPanel control_panel = new JPanel();
-        frame.add(control_panel, BorderLayout.SOUTH);
+        // Instructions Screen
+        final JPanel instructionsScreen = new JPanel();
+        instructionsScreen.setBackground(Color.BLACK);
+        contentPanel.add(instructionsScreen, "Instructions Screen");
+        
+        // Main playing area
+        final GameCourt court = new GameCourt(score_label, coins_label, lives_label);
+        court.setBackground(new Color(107, 140, 255));
+        contentPanel.add(court, "Game");
+        
+        // High Score Screen
+        final JPanel highScoreScreen = new JPanel();
+        highScoreScreen.setLayout(new BoxLayout(highScoreScreen, BoxLayout.Y_AXIS));
+        highScoreScreen.setBackground(Color.BLACK);
+        final HighScores hs = new HighScores();
+        contentPanel.add(highScoreScreen, "High Score Screen");
         
         // To Game button
         final JButton instructionsToGame = new JButton("To Game");
@@ -104,11 +99,48 @@ public class Game implements Runnable {
                 }
             }
         };
-        
+        highScoresToGame.setAlignmentX(Component.CENTER_ALIGNMENT);
         instructionsToGame.addActionListener(toGame);
         highScoresToGame.addActionListener(toGame);
         instructionsScreen.add(instructionsToGame);
-        highScoreScreen.add(highScoresToGame);
+        
+        // High Scores button
+        final JButton highScores = new JButton("High Scores");
+        highScores.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                GameCourt.playing = false;
+                highScoreScreen.removeAll();
+                JLabel highScoreIntro = new JLabel("High Scores:");
+                highScoreIntro.setForeground(Color.WHITE);
+                highScoreIntro.setAlignmentX(Component.CENTER_ALIGNMENT);
+                highScoreScreen.add(highScoreIntro);
+                List<HighScore> highScoreList = hs.getTopTenHighScores();
+                if (highScoreList.size() == 0) {
+                    JLabel noHS = new JLabel("None yet.");
+                    noHS.setForeground(Color.WHITE);
+                    noHS.setAlignmentX(Component.CENTER_ALIGNMENT);
+                    highScoreScreen.add(noHS);
+                } else {
+                    int i = 1;
+                    for (HighScore h : highScoreList) {
+                        JLabel nextHS = new JLabel(i + ". " + h.getUsername() + " " + h.getScore());
+                        nextHS.setForeground(Color.WHITE);
+                        nextHS.setAlignmentX(Component.CENTER_ALIGNMENT);
+                        highScoreScreen.add(nextHS);
+                        i++;
+                    }
+                }
+                highScoreScreen.add(highScoresToGame);
+                cl.show(contentPanel, "High Score Screen");
+            }
+        });
+        control_panel.add(highScores);
+        
+        // Let's Play button
+        final JButton letsPlay = new JButton("Let's Play!");
+        letsPlay.setAlignmentX(Component.CENTER_ALIGNMENT);
+        letsPlay.addActionListener(submitUsername);
+        welcomeScreen.add(letsPlay);
         
         // Instructions button
         final JButton instructions = new JButton("Instructions");
@@ -119,29 +151,6 @@ public class Game implements Runnable {
             }
         });
         control_panel.add(instructions);
-        
-        // High Scores button
-        final JButton highScores = new JButton("High Scores");
-        highScores.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                GameCourt.playing = false;
-                cl.show(contentPanel, "High Score Screen");
-            }
-        });
-        control_panel.add(highScores);
-
-        // Note here that when we add an action listener to the reset
-        // button, we define it as an anonymous inner class that is
-        // an instance of ActionListener with its actionPerformed()
-        // method overridden. When the button is pressed,
-        // actionPerformed() will be called.
-        final JButton reset = new JButton("Reset");
-        reset.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                court.reset();
-            }
-        });
-        control_panel.add(reset);
 
         // Put the frame on the screen
         frame.pack();

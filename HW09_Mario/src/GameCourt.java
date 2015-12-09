@@ -7,12 +7,15 @@ import java.util.LinkedList;
 @SuppressWarnings("serial")
 public class GameCourt extends JPanel {
     
+    LevelGenerator lg;
+    
     private Mario mario; // the Mario character, keyboard control
-    private GroundTile[] ground = new GroundTile[41]; // array of ground tiles
+    private GroundTile[] ground; // array of ground tiles
     private EndCastle castle;
     private LinkedList<Enemy> enemies;
     private LinkedList<Coin> coins;
     
+    public HighScores hs = new HighScores();
     public static String username = "";
     
     public static boolean playing = false; // whether the game is running
@@ -23,8 +26,9 @@ public class GameCourt extends JPanel {
     private JLabel coins_label; // Current status text (i.e. Running...)
     private JLabel score_label;
     private JLabel lives_label;
-    private JLabel wonLabel;
+    private JLabel doneLabel;
     
+    private static int finalScore;
     private static int score = 0;
     private static int num_coins = 0;
     private static int num_lives = 3;
@@ -37,7 +41,6 @@ public class GameCourt extends JPanel {
     public static final int GROUND_X_VELOCITY = 6;
     public static final int ENEMY_X_VELOCITY = 5;
     public static final int MAX_MARIO_X = 350;
-    public static final int MIN_MARIO_X = 300;
     // Update interval for timer, in milliseconds
     public static final int INTERVAL = 35;
     
@@ -61,7 +64,7 @@ public class GameCourt extends JPanel {
         // Enable keyboard focus on the court area.
         // When this component has the keyboard focus, key
         // events will be handled by its key listener.
-        //setFocusable(true);
+        setFocusable(true);
 
         // This key listener allows the square to move as long
         // as an arrow key is pressed, by changing the square's
@@ -86,10 +89,11 @@ public class GameCourt extends JPanel {
                     mario.gravityOn = true;
                 }
                 
-                if (e.getKeyCode() == KeyEvent.VK_Y) {
-                    if (gameWon) {
+                if (e.getKeyCode() == KeyEvent.VK_S) {
+                    if (gameWon || gameOver) {
                         num_lives = 3;
                         gameWon = false;
+                        gameOver = false;
                         reset();
                     }
                 }
@@ -122,28 +126,23 @@ public class GameCourt extends JPanel {
         this.coins_label = coins_label;
         this.lives_label = lives_label;
         
-        wonLabel = new JLabel("");
+        doneLabel = new JLabel("");
     }
     
     /**
      * (Re-)set the game to its initial state.
      */
     public void reset() {
-        wonLabel.setText("");
+        doneLabel.setText("");
         distanceTravelled = 0;
         endTile = false;
         removeAll();
         playAgainSet = false;
         mario = new Mario(COURT_WIDTH, COURT_HEIGHT);
-        coins = new LinkedList<Coin>();
-        coins.add(new Coin(COURT_WIDTH, COURT_HEIGHT, 400));
-        enemies = new LinkedList<Enemy>();
-        enemies.add(new Goomba(COURT_WIDTH, COURT_HEIGHT, 400));
-        enemies.add(new GreenKoopaTroop(COURT_WIDTH, COURT_HEIGHT, 650));
-        for (int i = 0; i < ground.length; i++) {
-            ground[i] = new GroundTile(COURT_WIDTH, COURT_HEIGHT, GroundTile.SIZE * i, 
-                    COURT_HEIGHT - GroundTile.SIZE);
-        }
+        lg = new LevelGenerator(121, COURT_WIDTH, COURT_HEIGHT);
+        coins = lg.getCoins();
+        enemies = lg.getEnemies();
+        ground = lg.getGroundTiles();
         castle = new EndCastle(COURT_WIDTH, COURT_HEIGHT, (ground.length - 1) * GroundTile.SIZE - 160);
         score = 0;
         num_coins = 0;
@@ -151,7 +150,7 @@ public class GameCourt extends JPanel {
         playing = true;
         
 
-        add(wonLabel);
+        add(doneLabel);
         score_label.setText("Score: " + score);
         lives_label.setText("Lives: " + num_lives);
         coins_label.setText("Coins: " + num_coins);
@@ -166,7 +165,11 @@ public class GameCourt extends JPanel {
      */
     void tick() {
         if (gameWon && playing) {
-            wonLabel.setText("Congratulations! You've won!\nDo you want to play again?");
+            doneLabel.setText("<html>Congratulations! You've won! <br> Press 'S' to play again!" +
+                    "<br> Your score: " + finalScore + "<html>");
+            playing = false;
+        } else if (gameOver && playing) {
+            doneLabel.setText("Sorry! You've lost!\nPress 'S' to play again!");
             playing = false;
         } else if (playing && mario.pos_y <= COURT_HEIGHT) {
             if (!(ground[ground.length-2].pos_x + GroundTile.SIZE > COURT_WIDTH)) {   
@@ -200,7 +203,7 @@ public class GameCourt extends JPanel {
             
             Enemy[] es = new Enemy[enemies.size()];
             enemies.toArray(es);
-            for (Enemy enemy : enemies) {
+            for (Enemy enemy : es) {
                 if (enemy.dead) {
                     enemies.remove(enemy);
                 }
@@ -222,6 +225,8 @@ public class GameCourt extends JPanel {
             
             if (castle.intersectsCastle(mario)) {
                gameWon = true;
+               finalScore = score;
+               hs.addHighScore(new HighScore(username, finalScore));
                return;
             }
             
@@ -239,7 +244,6 @@ public class GameCourt extends JPanel {
             repaint();
         } else {
             lives_label.setText("Lives: " + num_lives);
-            playing = false;
             if (num_lives > 0) reset();
             else gameOver = true;
         }
@@ -261,6 +265,7 @@ public class GameCourt extends JPanel {
             }
         }
         for (Coin coin : coins) {
+            coin.draw(g);
             if (coin.pos_x <= COURT_WIDTH && coin.pos_x + coin.width >= 0) {
                 coin.draw(g);
             }

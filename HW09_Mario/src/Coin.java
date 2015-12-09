@@ -21,7 +21,7 @@ public class Coin extends GameObj {
     public static int vel_x;
     
     public Coin(int courtWidth, int courtHeight, int startDistance) {
-        super(INIT_VEL_X, INIT_VEL_Y, courtWidth, START_HEIGHT, courtWidth, courtHeight, WIDTH,
+        super(INIT_VEL_X, INIT_VEL_Y, startDistance, START_HEIGHT, courtWidth, courtHeight, WIDTH,
                 HEIGHT, courtWidth, courtHeight, Direction.LEFT);
         
         try {
