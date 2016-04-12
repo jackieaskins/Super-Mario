@@ -1,4 +1,3 @@
-
 public class GreenKoopaTroop extends Enemy {
     
     private static String[] img_files_lt = {"Green_Koopa_Troopa.gif", "Green_Koopa_Troopa.gif",

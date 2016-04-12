@@ -1,4 +1,3 @@
-
 public class HighScore implements Comparable<HighScore> {
     private int score;
     private String username;

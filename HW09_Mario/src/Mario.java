@@ -80,6 +80,7 @@ public class Mario extends GameObj {
         if (v_x < 0) direction = Direction.LEFT;
         else if (v_x > 0) direction = Direction.RIGHT;
         
+        // Increment the distance travlled by Mario's velocity
         GameCourt.distanceTravelled += v_x;
         
         // Increment Mario's position

@@ -8,12 +8,14 @@ public class LevelGenerator {
     private Random r = new Random();
     
     public LevelGenerator(int groundLength, int courtWidth, int courtHeight) {
+        // Create the ground array based on the length of the ground
         ground = new GroundTile[groundLength];
         for (int i = 0; i < ground.length; i++) {
             ground[i] = new GroundTile(courtWidth, courtHeight, GroundTile.SIZE * i, 
                     courtHeight - GroundTile.SIZE);
         }
         
+        // Randomly place coins in groups of 3 along the screen
         coins = new LinkedList<Coin>();
         int i = 400;
         while (i < groundLength * GroundTile.SIZE - courtWidth) {
@@ -23,6 +25,7 @@ public class LevelGenerator {
             i += r.nextInt((250 - 100) + 1) + 100;
         }
         
+        // Randomly place enemies, first a goomba, then a koopa troop
         enemies = new LinkedList<Enemy>();
         i = 450;
         while (i < groundLength * GroundTile.SIZE - courtWidth) {

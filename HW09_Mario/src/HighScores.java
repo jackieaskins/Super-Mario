@@ -4,12 +4,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 public class HighScores {
     
@@ -25,7 +22,7 @@ public class HighScores {
     public HighScores() {
         highScores = new LinkedList<HighScore>();
         try {
-            fr = new FileReader("highscores.txt");
+            fr = new FileReader(file_name);
             in = new BufferedReader(fr);
             String newScore = in.readLine();
             while (newScore != null) {
@@ -63,7 +60,7 @@ public class HighScores {
     
     public void addHighScore(HighScore hs) {
         try {
-            fw = new FileWriter("highscores.txt", true);
+            fw = new FileWriter(file_name, true);
             out = new BufferedWriter(fw);
             if (hs != null) {
                 highScores.add(hs);

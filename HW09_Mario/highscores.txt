@@ -1,3 +1,8 @@
 jackie 4800
-Ardita 4500
-Ardita 4600
+jackie 4600
+jackie 4200
+l 700
+jackie 5200
+jackie 4700
+montel 4700
+rixx 6300

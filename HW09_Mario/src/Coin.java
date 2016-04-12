@@ -6,10 +6,11 @@ import javax.imageio.ImageIO;
 
 public class Coin extends GameObj {
     
-    public static String[] img_files = {"Coin.gif", "Coin.gif", "Coin_2.gif", "Coin_2.gif",
-            "Coin_3.gif", "Coin_3.gif", "Coin_4.gif", "Coin_4.gif"};
+    public static String[] img_files = {"Coin.gif", "Coin.gif", "Coin.gif", "Coin_2.gif", "Coin_2.gif",
+            "Coin_2.gif", "Coin_3.gif", "Coin_3.gif", "Coin_3.gif", "Coin_4.gif", "Coin_4.gif",
+            "Coin_4.gif"};
     
-    public int startDistance;
+    public int startDistance; // Where the coin should start
     public static int INIT_VEL_X = 0;
     public static int INIT_VEL_Y = 0;
     public static final int WIDTH = 16;
@@ -46,6 +47,7 @@ public class Coin extends GameObj {
     }
     
     public void spinCoin() {
+        // Loop through the images & spin the coins
         for (int i = 0; i < imgs.length; i++) {
             if (i == imgs.length - 1 && img.equals(imgs[i])) {
                 img = imgs[0];
